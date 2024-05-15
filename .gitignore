@@ -1,0 +1,8 @@
+/bin
+/site-packages
+/.venv
+/share
+/include
+/pyvenv.cfg
+
+/**/.DS_Store
