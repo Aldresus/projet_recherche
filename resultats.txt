@@ -1,0 +1,5 @@
+Best parameters: [128, 'tanh', 0.2, 64, 'tanh', 0.2, 64, 'relu', 1, 'linear', 0.001, 300, 128]
+Best mse: 5.373108091527345
+
+Best parameters: [128, 'tanh', 0.13, 64, 'tanh', 0.2, 144, 'sigmoid', 1, 'linear', 0.0007, 300, 128]
+Best mse: 4.916316288408638
