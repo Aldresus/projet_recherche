@@ -6,3 +6,6 @@ Best mse: 4.916316288408638
 
 Best parameters: [208, 'tanh', 0.2, 72, 'tanh', 0.7000000000000001, 128, 'relu', 1, 'linear', 0.001, 300, 128]
 Best mse: 5.018104078330731
+
+Best parameters: [152, 'linear', 0.11, 240, 'tanh', 0.1, 232, 'tanh', 1, 'linear', 0.0005, 370, 112]
+Best mse: 3.9198657488914677
