@@ -9,3 +9,6 @@ Best mse: 5.018104078330731
 
 Best parameters: [152, 'linear', 0.11, 240, 'tanh', 0.1, 232, 'tanh', 1, 'linear', 0.0005, 370, 112]
 Best mse: 3.9198657488914677
+
+Best parameters: [168, 'relu', 0.2, 216, 'hard_sigmoid', 0.22, 216, 'relu', 1, 'linear', 0.001, 210, 88]
+Best mse: 4.50983930943095
