@@ -1,14 +1,19 @@
 Best parameters: [128, 'tanh', 0.2, 64, 'tanh', 0.2, 64, 'relu', 1, 'linear', 0.001, 300, 128]
 Best mse: 5.373108091527345
+full dataset: mse: 14.449937473705194
 
 Best parameters: [128, 'tanh', 0.13, 64, 'tanh', 0.2, 144, 'sigmoid', 1, 'linear', 0.0007, 300, 128]
 Best mse: 4.916316288408638
+full dataset: mse: 9.700898305192315
 
 Best parameters: [208, 'tanh', 0.2, 72, 'tanh', 0.7000000000000001, 128, 'relu', 1, 'linear', 0.001, 300, 128]
 Best mse: 5.018104078330731
+full dataset: mse: 38.30601713980974 / 38.42207665831924
 
 Best parameters: [152, 'linear', 0.11, 240, 'tanh', 0.1, 232, 'tanh', 1, 'linear', 0.0005, 370, 112]
 Best mse: 3.9198657488914677
+full dataset: mse: 6.97430859003626 / 7.2850337168051755
 
 Best parameters: [168, 'relu', 0.2, 216, 'hard_sigmoid', 0.22, 216, 'relu', 1, 'linear', 0.001, 210, 88]
 Best mse: 4.50983930943095
+full dataset: mse: 27.785230154245795 / 19.167861794862926
