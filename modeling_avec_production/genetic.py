@@ -1,6 +1,3 @@
-import random
-import numpy as np
-
 import pandas as pd
 
 data = pd.read_csv('/Users/hugochampy/Documents/le_code_la/Optimization/sampled_dataset.csv')
@@ -89,28 +86,25 @@ import random
 import math
 import numpy as np
 
-# Define the range of hyperparameters to search
-PARAM_RANGES = {
-    'param1': (0.1, 1.0),
-    'param2': (10, 100),
-    'param3': (0.001, 0.1)
-}
+# Define the parameter ranges
+LSTM1_units = list(range(1, 1000, 10))
 
-# Define the population size and number of generations
-POPULATION_SIZE = 50
-NUM_GENERATIONS = 100
+LSTM1_activation = ['tanh', 'relu', 'sigmoid', 'hard_sigmoid', 'linear']
+DROPOUT1_rate = list(np.arange(0, 1, 0.01))
+LSTM2_units = list(range(1, 1000, 10))
+LSTM2_activation = ['tanh', 'relu', 'sigmoid', 'hard_sigmoid', 'linear']
+DROPOUT2_rate = list(np.arange(0, 1, 0.01))
+DENSE1_units = list(range(1, 1000, 10))
+DENSE1_activation = ['tanh', 'relu', 'sigmoid', 'hard_sigmoid', 'linear']
+DENSE2_units = [1]
+DENSE2_activation = ['linear']
+OPTIMIZER_learning_rate = list(np.arange(0, 0.001, 0.0001))
+EPOCHS = [10]
+#EPOCHS = list(range(200, 400, 10))
+BATCH_SIZE = list(range(32, 128, 8))
 
-# Define the mutation rate and crossover rate
-MUTATION_RATE = 0.1
-CROSSOVER_RATE = 0.8
-
-# Define the fitness function (replace with your actual evaluation function)
-def fitness_function(params):
-    """
-    Evaluate the fitness of an individual (set of hyperparameters)
-    by training and evaluating your model.
-    Return a fitness score (higher is better).
-    """
+# Define the objective function (replace with your actual objective function)
+def objective_function(params):
     print(f"params {params}")
     # Unpack the parameters
     lstm1_units, lstm1_activation, dropout1_rate, lstm2_units, lstm2_activation, dropout2_rate, dense1_units, dense1_activation, dense2_units, dense2_activation, optimizer_learning_rate, epochs, batch_size = params
@@ -156,7 +150,7 @@ def fitness_function(params):
                             batch_size=batch_size,
                             validation_split=0.2,
                             shuffle=False,
-                            verbose=0)
+                            verbose=2)
         training_duration = time.time() - start_time
     finally:
         print("finito pipo")
@@ -174,58 +168,119 @@ def fitness_function(params):
     # Return the performance metric (e.g., accuracy, loss) to be minimized
     return performance_metric
 
-# Initialize the population
-population = []
-for _ in range(POPULATION_SIZE):
-    individual = {param: random.uniform(*PARAM_RANGES[param]) for param in PARAM_RANGES}
-    population.append(individual)
+# Define the genetic algorithm functions
+def initialize_population(pop_size):
+    population = []
+    for _ in range(pop_size):
+        individual = [
+            random.choice(LSTM1_units),
+            random.choice(LSTM1_activation),
+            random.choice(DROPOUT1_rate),
+            random.choice(LSTM2_units),
+            random.choice(LSTM2_activation),
+            random.choice(DROPOUT2_rate),
+            random.choice(DENSE1_units),
+            random.choice(DENSE1_activation),
+            random.choice(DENSE2_units),
+            random.choice(DENSE2_activation),
+            random.choice(OPTIMIZER_learning_rate),
+            random.choice(EPOCHS),
+            random.choice(BATCH_SIZE)
+        ]
+        population.append(individual)
+    return population
 
-# Genetic algorithm loop
-for generation in range(NUM_GENERATIONS):
-    # Evaluate the fitness of each individual
-    fitness_scores = [fitness_function(individual) for individual in population]
+def evaluate_fitness(individual):
+    fitness = objective_function(individual)
+    return fitness
 
-    # Select parents for the next generation
-    parents = []
-    for _ in range(POPULATION_SIZE // 2):
-        parent1 = random.choices(population, weights=fitness_scores, k=1)[0]
-        parent2 = random.choices(population, weights=fitness_scores, k=1)[0]
-        parents.append(parent1)
-        parents.append(parent2)
+def selection(population, fitness_scores):
+    # Perform tournament selection
+    tournament_size = 5
+    selected_parents = []
+    for _ in range(len(population)):
+        tournament = random.sample(range(len(population)), tournament_size)
+        tournament_fitness = [fitness_scores[i] for i in tournament]
+        winner_index = tournament[tournament_fitness.index(min(tournament_fitness))]
+        selected_parents.append(population[winner_index])
+    return selected_parents
 
-    # Create the next generation
-    next_generation = []
-    for i in range(0, POPULATION_SIZE, 2):
+def crossover(parents, crossover_rate):
+    offspring = []
+    for i in range(0, len(parents), 2):
         parent1 = parents[i]
-        parent2 = parents[i + 1]
-
-        # Crossover
-        if random.random() < CROSSOVER_RATE:
-            child1 = {}
-            child2 = {}
-            for param in PARAM_RANGES:
-                if random.random() < 0.5:
-                    child1[param] = parent1[param]
-                    child2[param] = parent2[param]
-                else:
-                    child1[param] = parent2[param]
-                    child2[param] = parent1[param]
+        parent2 = parents[i+1] if i+1 < len(parents) else parents[0]
+        if random.random() < crossover_rate:
+            crossover_point = random.randint(1, len(parent1) - 1)
+            child1 = parent1[:crossover_point] + parent2[crossover_point:]
+            child2 = parent2[:crossover_point] + parent1[crossover_point:]
+            offspring.append(child1)
+            offspring.append(child2)
         else:
-            child1 = parent1.copy()
-            child2 = parent2.copy()
+            offspring.append(parent1)
+            offspring.append(parent2)
+    return offspring
 
-        # Mutation
-        for child in [child1, child2]:
-            for param in PARAM_RANGES:
-                if random.random() < MUTATION_RATE:
-                    child[param] = random.uniform(*PARAM_RANGES[param])
+def mutation(offspring, mutation_rate):
+    for i in range(len(offspring)):
+        if random.random() < mutation_rate:
+            param_index = random.randint(0, len(offspring[i]) - 1)
+            if param_index == 0:
+                offspring[i][param_index] = random.choice(LSTM1_units)
+            elif param_index == 1:
+                offspring[i][param_index] = random.choice(LSTM1_activation)
+            elif param_index == 2:
+                offspring[i][param_index] = random.choice(DROPOUT1_rate)
+            elif param_index == 3:
+                offspring[i][param_index] = random.choice(LSTM2_units)
+            elif param_index == 4:
+                offspring[i][param_index] = random.choice(LSTM2_activation)
+            elif param_index == 5:
+                offspring[i][param_index] = random.choice(DROPOUT2_rate)
+            elif param_index == 6:
+                offspring[i][param_index] = random.choice(DENSE1_units)
+            elif param_index == 7:
+                offspring[i][param_index] = random.choice(DENSE1_activation)
+            elif param_index == 8:
+                offspring[i][param_index] = random.choice(DENSE2_units)
+            elif param_index == 9:
+                offspring[i][param_index] = random.choice(DENSE2_activation)
+            elif param_index == 10:
+                offspring[i][param_index] = random.choice(OPTIMIZER_learning_rate)
+            elif param_index == 11:
+                offspring[i][param_index] = random.choice(EPOCHS)
+            elif param_index == 12:
+                offspring[i][param_index] = random.choice(BATCH_SIZE)
+    return offspring
 
-        next_generation.append(child1)
-        next_generation.append(child2)
+def genetic_algorithm(pop_size, crossover_rate, mutation_rate, generations):
+    population = initialize_population(pop_size)
+    best_solution = None
+    best_fitness = float('inf')
 
-    # Replace the old population with the new generation
-    population = next_generation
+    for generation in range(generations):
+        fitness_scores = [evaluate_fitness(individual) for individual in population]
+        
+        if min(fitness_scores) < best_fitness:
+            best_index = fitness_scores.index(min(fitness_scores))
+            best_solution = population[best_index]
+            best_fitness = min(fitness_scores)
+        
+        parents = selection(population, fitness_scores)
+        offspring = crossover(parents, crossover_rate)
+        offspring = mutation(offspring, mutation_rate)
+        population = offspring
 
-# Find the best individual from the final population
-best_individual = max(population, key=fitness_function)
-print("Best hyperparameters found:", best_individual)
+        print(f"Generation {generation+1}: Best Fitness = {best_fitness}")
+
+    return best_solution, best_fitness
+
+# Run the genetic algorithm
+pop_size = 50
+crossover_rate = 0.8
+mutation_rate = 0.1
+generations = 100
+
+best_params, best_fitness = genetic_algorithm(pop_size, crossover_rate, mutation_rate, generations)
+print("Best parameters:", best_params)
+print("Best fitness:", best_fitness)
