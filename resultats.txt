@@ -1,0 +1,37 @@
+Recuit:
+
+Best parameters: [128, 'tanh', 0.2, 64, 'tanh', 0.2, 64, 'relu', 1, 'linear', 0.001, 300, 128]
+Best mse: 5.373108091527345
+full dataset: mse: 14.449937473705194
+
+Best parameters: [128, 'tanh', 0.13, 64, 'tanh', 0.2, 144, 'sigmoid', 1, 'linear', 0.0007, 300, 128]
+Best mse: 4.916316288408638         <-----
+full dataset: mse: 9.700898305192315
+
+Best parameters: [208, 'tanh', 0.2, 72, 'tanh', 0.7000000000000001, 128, 'relu', 1, 'linear', 0.001, 300, 128]
+Best mse: 5.018104078330731
+full dataset: mse: 38.30601713980974 / 38.42207665831924
+
+Best parameters: [152, 'linear', 0.11, 240, 'tanh', 0.1, 232, 'tanh', 1, 'linear', 0.0005, 370, 112]
+Best mse: 3.9198657488914677
+full dataset: mse: 6.97430859003626
+
+Best parameters: [168, 'relu', 0.2, 216, 'hard_sigmoid', 0.22, 216, 'relu', 1, 'linear', 0.001, 210, 88]
+Best mse: 4.50983930943095
+full dataset: mse: 27.785230154245795 / 19.167861794862926
+
+PSO:
+(Quentin)
+Meilleure position: [100, 'sigmoid', 0.10688666719720981, 191, 'tanh', 0.14542214802443248, 146, 'tanh', 0.001, 342, 95]
+Meilleur score: 6.155151456185812
+
+(Tom)
+Meilleure position: [188, 'tanh', 0.0, 169, 'sigmoid', 0.0, 124, 'sigmoid', 1, 'linear', 0.001, 381, 100]
+Meilleur score: 4.423137317684975
+full dataset: mse: 5.855609991069321
+7.218646639601859
+
+(Tom)
+Meilleure position: [204, 'tanh', 0.026222221567339693, 232, 'relu', 0.5667095802554634, 251, 'tanh', 1, 'linear', 0.0001, 387, 34]
+Meilleur score: 7.114448989343611
+full dataset: mse: 10.950946139363309
